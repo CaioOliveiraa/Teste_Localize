@@ -9,14 +9,17 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configuração do banco de dados
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 
+// Injeção de dependências
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IEmpresaService, EmpresaService>();
 builder.Services.AddHttpClient();
 
+// Política de CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(
@@ -89,17 +92,37 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
+// Swagger no ambiente de desenvolvimento
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
+// CORS
 app.UseCors("FrontendPolicy");
 
+// Middleware para extrair JWT do cookie e colocar no header Authorization
+app.Use(
+    async (context, next) =>
+    {
+        var token = context.Request.Cookies["token"];
+
+        if (!string.IsNullOrWhiteSpace(token))
+        {
+            context.Request.Headers.Authorization = $"Bearer {token}";
+        }
+
+        await next();
+    }
+);
+
+// Autenticação e autorização
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Mapear os controllers
 app.MapControllers();
+
 app.Run();
