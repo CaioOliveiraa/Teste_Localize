@@ -35,8 +35,7 @@ Este repositório contém uma API REST desenvolvida em **ASP.NET 8** para cadast
 
 ```bash
 
-git clone <este-repositorio>
-
+git clone <URL_DO_REPOSITORIO>
 cd Teste_Localize
 
 ```
@@ -85,7 +84,7 @@ dotnet run --project CadastroEmpresas
 
   
 
-A API estará disponível por padrão em `https://localhost:5001` (ou porta definida pelo ASP.NET). Em desenvolvimento, o Swagger pode ser acessado em `/swagger`.
+A API estará disponível por padrão em `https://localhost:5114` (ou porta definida pelo ASP.NET). Em desenvolvimento, o Swagger pode ser acessado em `/swagger`.
 
 
 ## Executando o frontend (Next.js)
