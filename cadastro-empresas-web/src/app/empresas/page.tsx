@@ -28,7 +28,6 @@ interface Empresa {
 
 export default function EmpresasPage() {
   const [empresas, setEmpresas] = useState<Empresa[]>([]);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [erro, setErro] = useState('');
   const router = useRouter();
 
@@ -40,7 +39,7 @@ export default function EmpresasPage() {
           withCredentials: true,
         });
         setEmpresas(response.data);
-      } catch (error) {
+      } catch {
         setErro('Erro ao buscar empresas. Faça login novamente.');
         router.push('/login');
       }
