@@ -28,6 +28,7 @@ interface Empresa {
 
 export default function EmpresasPage() {
   const [empresas, setEmpresas] = useState<Empresa[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [erro, setErro] = useState('');
   const router = useRouter();
 

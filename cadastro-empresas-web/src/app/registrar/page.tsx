@@ -4,7 +4,7 @@ import { useState } from 'react';
 import FormInput from '@/components/FormInput';
 import Button from '@/components/Button';
 import { useRouter } from 'next/navigation';
-import api from '@/lib/api'; // ✅ Usa instância com baseURL
+import api from '@/lib/api'; 
 
 export default function RegistrarPage() {
   const [nome, setNome] = useState('');
@@ -30,6 +30,7 @@ export default function RegistrarPage() {
         setSucesso('Conta criada com sucesso! Redirecionando...');
         setTimeout(() => router.push('/login'), 1500);
       }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       if (error.response?.status === 400) {
         setErro(error.response.data?.mensagem || 'Erro ao registrar.');
