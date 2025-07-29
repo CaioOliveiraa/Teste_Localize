@@ -32,6 +32,18 @@ public class AuthController : ControllerBase
         if (resposta == null)
             return Unauthorized("E-mail ou senha inválidos.");
 
+        Response.Cookies.Append(
+            "token",
+            resposta.Token,
+            new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Lax,
+                Expires = DateTimeOffset.UtcNow.AddDays(1),
+            }
+        );
+
         return Ok(resposta);
     }
 }

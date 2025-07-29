@@ -17,6 +17,22 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IEmpresaService, EmpresaService>();
 builder.Services.AddHttpClient();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(
+        "FrontendPolicy",
+        policy =>
+        {
+            policy
+                .WithOrigins("http://localhost:3000")
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials();
+        }
+    );
+});
+
+// Autenticação JWT
 builder
     .Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -34,6 +50,7 @@ builder
         };
     });
 
+// Controllers e Swagger
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -77,6 +94,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors("FrontendPolicy");
 
 app.UseHttpsRedirection();
 app.UseAuthentication();
