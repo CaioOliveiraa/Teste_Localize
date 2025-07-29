@@ -37,3 +37,6 @@ secrets.json
 *.log
 *.sqlite
 *.sqlite-journal
+
+*.db
+
