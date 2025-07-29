@@ -29,7 +29,7 @@ builder.Services.AddCors(options =>
             policy
                 .WithOrigins(
                     "http://localhost:3000",
-                    "https://teste-localize-jfy1qul3f-caiooliveiraas-projects.vercel.app"
+                    "https://teste-localize-ijyfqul3f-caiooliveiraas-projects.vercel.app"
                 )
                 .AllowAnyHeader()
                 .AllowAnyMethod()
