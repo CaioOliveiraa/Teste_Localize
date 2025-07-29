@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using CadastroEmpresas.Data;
 using CadastroEmpresas.Dtos.Empresa;
 using CadastroEmpresas.Models;
@@ -20,8 +21,20 @@ public class EmpresaService : IEmpresaService
 
     public async Task<EmpresaResponseDto?> CadastrarEmpresaPorCnpjAsync(string cnpj, int usuarioId)
     {
+        var cnpjNumeros = Regex.Replace(cnpj, @"[^\d]", "");
+
+        if (cnpjNumeros.Length != 14)
+            return null;
+
+        var empresaExistente = await _context.Empresas.FirstOrDefaultAsync(e =>
+            e.Cnpj == cnpjNumeros && e.UsuarioId == usuarioId
+        );
+
+        if (empresaExistente != null)
+            return MapearParaDto(empresaExistente);
+
         var client = _httpClientFactory.CreateClient();
-        var response = await client.GetAsync($"https://www.receitaws.com.br/v1/cnpj/{cnpj}");
+        var response = await client.GetAsync($"https://www.receitaws.com.br/v1/cnpj/{cnpjNumeros}");
 
         if (!response.IsSuccessStatusCode)
             return null;
@@ -30,13 +43,13 @@ public class EmpresaService : IEmpresaService
         var dados = JsonConvert.DeserializeObject<ReceitaWsResponse>(content);
 
         if (dados == null || dados.Status?.ToLower() != "ok")
-            return null;
+            throw new Exception("Erro ao buscar dados da ReceitaWS.");
 
         var empresa = new Empresa
         {
             NomeEmpresarial = dados.Nome ?? "",
             NomeFantasia = dados.Fantasia ?? "",
-            Cnpj = dados.Cnpj ?? "",
+            Cnpj = cnpjNumeros,
             Situacao = dados.Situacao ?? "",
             Abertura = dados.Abertura ?? "",
             Tipo = dados.Tipo ?? "",
@@ -58,9 +71,18 @@ public class EmpresaService : IEmpresaService
         return MapearParaDto(empresa);
     }
 
-    public async Task<List<EmpresaResponseDto>> ListarEmpresasDoUsuarioAsync(int usuarioId)
+    public async Task<List<EmpresaResponseDto>> ListarEmpresasDoUsuarioAsync(
+        int usuarioId,
+        int pagina,
+        int quantidade
+    )
     {
-        var empresas = await _context.Empresas.Where(e => e.UsuarioId == usuarioId).ToListAsync();
+        var empresas = await _context
+            .Empresas.Where(e => e.UsuarioId == usuarioId)
+            .OrderBy(e => e.NomeFantasia)
+            .Skip((pagina - 1) * quantidade)
+            .Take(quantidade)
+            .ToListAsync();
 
         return empresas.Select(MapearParaDto).ToList();
     }

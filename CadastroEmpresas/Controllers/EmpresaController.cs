@@ -33,10 +33,20 @@ public class EmpresaController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<EmpresaResponseDto>>> Listar()
+    public async Task<ActionResult<List<EmpresaResponseDto>>> Listar(
+        [FromQuery] int pagina = 1,
+        [FromQuery] int quantidade = 10
+    )
     {
+        if (pagina < 1 || quantidade < 1)
+            return BadRequest("Parâmetros de paginação inválidos.");
+
         int usuarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-        var empresas = await _empresaService.ListarEmpresasDoUsuarioAsync(usuarioId);
+        var empresas = await _empresaService.ListarEmpresasDoUsuarioAsync(
+            usuarioId,
+            pagina,
+            quantidade
+        );
         return Ok(empresas);
     }
 }
