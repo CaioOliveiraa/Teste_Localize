@@ -9,6 +9,7 @@ Este repositório contém uma API REST desenvolvida em **ASP.NET 8** para cadast
 
 - [.NET 8 SDK](https://dotnet.microsoft.com/en-us/download)
 - [EF Core CLI](https://learn.microsoft.com/ef/core/cli/dotnet)
+- [Node.js](https://nodejs.org/) 18 ou superior para executar o frontend
 
 ## Funcionalidades
 
@@ -86,7 +87,34 @@ dotnet run --project CadastroEmpresas
 
 A API estará disponível por padrão em `https://localhost:5001` (ou porta definida pelo ASP.NET). Em desenvolvimento, o Swagger pode ser acessado em `/swagger`.
 
-  
+
+## Executando o frontend (Next.js)
+
+1. Acesse o diretório `cadastro-empresas-web`:
+
+```bash
+cd cadastro-empresas-web
+```
+
+2. Instale as dependências:
+
+```bash
+npm install
+```
+
+3. Crie um arquivo `.env.local` definindo o endereço da API:
+
+```bash
+NEXT_PUBLIC_API_URL=http://localhost:5114
+```
+
+4. Inicie a aplicação web:
+
+```bash
+npm run dev
+```
+
+O site estará disponível em `http://localhost:3000`.
 
 ## Executando os testes
 
@@ -113,6 +141,8 @@ dotnet  test
 -  `CadastroEmpresas/` – Código da API principal.
 
 -  `CadastroEmpresas.Tests/` – Projeto de testes automatizados.
+
+-  `cadastro-empresas-web/` – Aplicação web construída com Next.js.
 
 -  `CadastroEmpresas.sln` – Solução com os dois projetos.
 
