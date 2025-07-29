@@ -8,7 +8,6 @@ using CadastroEmpresas.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using Moq.Language.Flow;
 using Moq.Protected;
 using Xunit;
 
@@ -98,21 +97,20 @@ public class EmpresaServiceTests
     }
 
     [Fact]
-    public async Task CadastrarEmpresaPorCnpjAsync_DeveRetornarNull_SeApiFalhar()
+    public async Task CadastrarEmpresaPorCnpjAsync_DeveLancarExcecao_SeApiFalhar()
     {
         // Arrange
         var dbContext = CriarDbContextEmMemoria();
-
         var respostaInvalida = @"{ ""status"": ""ERROR"" }";
-
         var httpFactory = CriarHttpClientFactoryFalso(respostaInvalida);
         var service = new EmpresaService(dbContext, httpFactory);
 
-        // Act
-        var resultado = await service.CadastrarEmpresaPorCnpjAsync("00000000000000", 1);
+        // Act & Assert
+        var ex = await Assert.ThrowsAsync<Exception>(() =>
+            service.CadastrarEmpresaPorCnpjAsync("00000000000000", 1)
+        );
 
-        // Assert
-        Assert.Null(resultado);
+        Assert.Equal("Erro ao buscar dados da ReceitaWS.", ex.Message);
     }
 
     [Fact]
@@ -144,11 +142,11 @@ public class EmpresaServiceTests
 
         await dbContext.SaveChangesAsync();
 
-        var httpFactoryMock = new Mock<IHttpClientFactory>(); // não será usado nesse teste
+        var httpFactoryMock = new Mock<IHttpClientFactory>();
         var service = new EmpresaService(dbContext, httpFactoryMock.Object);
 
         // Act
-        var resultado = await service.ListarEmpresasDoUsuarioAsync(1);
+        var resultado = await service.ListarEmpresasDoUsuarioAsync(1, 1, 10);
 
         // Assert
         Assert.Equal(2, resultado.Count);
