@@ -4,7 +4,7 @@ import { useState } from 'react';
 import FormInput from '@/components/FormInput';
 import Button from '@/components/Button';
 import { useRouter } from 'next/navigation';
-import axios from 'axios';
+import api from '@/lib/api';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -17,11 +17,10 @@ export default function LoginPage() {
     setErro('');
 
     try {
-      const response = await axios.post(
-        'http://localhost:5114/auth/login',
-        { email, senha },
-        { withCredentials: true }
-      );
+      const response = await api.post('/auth/login', {
+        email,
+        senha
+      });
 
       if (response.status === 200) {
         router.push('/empresas');

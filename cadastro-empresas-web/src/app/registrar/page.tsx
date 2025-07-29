@@ -4,7 +4,7 @@ import { useState } from 'react';
 import FormInput from '@/components/FormInput';
 import Button from '@/components/Button';
 import { useRouter } from 'next/navigation';
-import axios from 'axios';
+import api from '@/lib/api'; // ✅ Usa instância com baseURL
 
 export default function RegistrarPage() {
   const [nome, setNome] = useState('');
@@ -20,11 +20,11 @@ export default function RegistrarPage() {
     setSucesso('');
 
     try {
-      const response = await axios.post(
-        'http://localhost:5114/auth/registrar',
-        { nome, email, senha },
-        { withCredentials: true }
-      );
+      const response = await api.post('/auth/registrar', {
+        nome,
+        email,
+        senha,
+      });
 
       if (response.status === 200) {
         setSucesso('Conta criada com sucesso! Redirecionando...');
